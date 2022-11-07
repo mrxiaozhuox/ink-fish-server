@@ -40,7 +40,7 @@ class UserInfo(UserBase):
 def get_user(db: Session, id: int):
     return db.query(UserModel).filter(UserModel.id == id).first()
 
-def get_user_by_id(db: Session, email: str):
+def get_user_by_email(db: Session, email: str):
     return db.query(UserModel).filter(UserModel.email == email).first()
 
 def create_user(db: Session, user: UserCreate):
