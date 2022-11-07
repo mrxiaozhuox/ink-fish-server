@@ -26,12 +26,12 @@ def init_database_connection():
     db = SessionLocal()
 
     # init configure default data
-    if not configure.config_exists(db, "hash_salt"):
-        hash_salt = ''.join(random.sample("abcdefghijklmnopqrstuvwxyz1234567890", 15))
-        configure.set_config(db, configure.ConfigureCreate(item="hash_salt", value=hash_salt))
     if not configure.config_exists(db, "setup_time"):
         setup_time = int(time.time())
         configure.set_config(db, configure.ConfigureCreate(item="setup_time", value=str(setup_time)))
+    if not configure.config_exists(db, "hash_salt"):
+        hash_salt = ''.join(random.sample("abcdefghijklmnopqrstuvwxyz1234567890", 15))
+        configure.set_config(db, configure.ConfigureCreate(item="hash_salt", value=hash_salt))
 
 
     db.close()
