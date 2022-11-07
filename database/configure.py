@@ -30,3 +30,6 @@ def set_config(db: Session, configure: ConfigureCreate):
     db.commit()
     db.refresh(db_configure)
     return db_configure
+
+def config_exists(db: Session, item: str):
+    return db.query(ConfigureModel).filter_by(item = item).scalar() is not None
