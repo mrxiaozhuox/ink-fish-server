@@ -15,6 +15,8 @@ class UserModel(Base):
     password = Column(String)
     
     bio = Column(String, default = 'Hello World!')
+    location = Column(String, default = "")
+    gender = Column(String, default = "unknown")
 
     is_active = Column(Boolean, default = True)
 
@@ -27,7 +29,11 @@ class UserCreate(UserBase):
 
 class UserInfo(UserBase):
     id: int
+
     bio: str
+    location: str
+    gender: str
+    
     class Config:
         orm_mode = True
 
