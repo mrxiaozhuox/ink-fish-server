@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
+from config import AppConfigure
 
 from database import account
 
 from sqlalchemy.orm import Session
 from database.connection import get_database
+from main import get_config
 
 router = APIRouter(prefix="/account")
 
@@ -26,7 +28,7 @@ async def get_account_info(
     return user
 
 @router.post("/register/", response_model=account.UserInfo)
-def register_account(user: account.UserCreate, db: Session = Depends(get_database)):
+def register_account(user: account.UserCreate, db: Session = Depends(get_database), app_config: AppConfigure):
     db_user = account.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")

@@ -1,3 +1,4 @@
+import hashlib
 from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy.orm import Session
 from .connection import Base
