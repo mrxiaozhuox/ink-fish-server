@@ -8,7 +8,10 @@ struct ErrorResponse {
 }
 
 #[derive(Error, Debug)]
-pub enum AppError {}
+pub enum AppError {
+    #[error("sqlx: `{0}`")]
+    Sqlx(#[from] sqlx::error::Error)
+}
 
 #[async_trait]
 impl Writer for AppError {

@@ -3,6 +3,7 @@ use salvo::prelude::*;
 mod db;
 mod error;
 mod router;
+mod model;
 
 
 #[tokio::main]
