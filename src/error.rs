@@ -9,7 +9,10 @@ struct ErrorResponse {
 
 #[derive(Error, Debug)]
 pub enum AppError {
-    #[error("sqlx: `{0}`")]
+    #[error("Missing request parameter: `{0}`")]
+    MissingParam(&'static str),
+
+    #[error("Sqlx: `{0}`")]
     Sqlx(#[from] sqlx::error::Error)
 }
 

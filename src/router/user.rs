@@ -1,19 +1,28 @@
 use salvo::prelude::*;
 
-use crate::error::Result;
+use crate::{
+    error::{AppError, Result},
+    model::user::{User, UserReader},
+};
 
 #[handler]
-pub fn get_account(req: &mut Request) -> Result<&'static str> {
-    
-    let user_id = req.param::<u32>("id");
-    
-    Ok("1231231231231")
+pub async fn get_account(req: &mut Request, _resp: &mut Response) -> Result<Json<UserReader>> {
+
+    let user_id = req.query::<i32>("id");
+    let user_email = req.query::<String>("email");
+
+
+    let user = if let Some(id) = user_id {
+        User::get_user_by_id(id).await?
+    } else if let Some(email) = user_email {
+        User::get_user_by_email(email).await?
+    } else {
+        return Err(AppError::MissingParam("ID or Email"));
+    };
+
+    Ok(Json(user))
 }
 
 pub fn router() -> Router {
-    Router::with_path("user")
-    .push(
-        Router::with_path("<id>")
-        .get(get_account)
-    )
+    Router::with_path("user").push(Router::with_path("info").get(get_account))
 }

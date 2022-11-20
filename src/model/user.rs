@@ -1,4 +1,3 @@
-use rand::Rng;
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
@@ -27,14 +26,14 @@ pub struct User;
 #[allow(dead_code)]
 impl User {
     pub async fn get_user_by_id(id: i32) -> Result<UserReader> {
-        let user = sqlx::query_as::<_, UserReader>("select * from user where id = $1;")
+        let user = sqlx::query_as::<_, UserReader>("select * from \"user\" where id = $1;")
             .bind(id)
             .fetch_one(get_db_pool())
             .await?;
         Ok(user)
     }
     pub async fn get_user_by_email(email: String) -> Result<UserReader> {
-        let user = sqlx::query_as::<_, UserReader>("select * from user where email = $1;")
+        let user = sqlx::query_as::<_, UserReader>("select * from \"user\" where email = $1;")
             .bind(email)
             .fetch_one(get_db_pool())
             .await?;
@@ -54,7 +53,7 @@ impl User {
         let hashed_password = Self::gen_hashed_password(salt.clone(), info.password);
 
         let _ = sqlx::query(
-            "insert into user (email, username, password, salt) values ($1, $2, $3, $4);",
+            "insert into \"user\" (email, username, password, salt) values ($1, $2, $3, $4);",
         )
         .bind(info.email.clone())
         .bind(info.username)
