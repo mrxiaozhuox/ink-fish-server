@@ -22,6 +22,12 @@ pub struct UserReader {
     pub role: i32,
 }
 
+#[derive(Debug, Serialize, Deserialize, FromRow)]
+pub struct UserPasswordInfo {
+    pub password: String,
+    pub salt: String,
+}
+
 pub struct User;
 #[allow(dead_code)]
 impl User {
@@ -32,6 +38,7 @@ impl User {
             .await?;
         Ok(user)
     }
+
     pub async fn get_user_by_email(email: String) -> Result<UserReader> {
         let user = sqlx::query_as::<_, UserReader>("select * from \"user\" where email = $1;")
             .bind(email)
@@ -43,6 +50,26 @@ impl User {
     pub fn gen_hashed_password(salt: String, pwd: String) -> String {
         let digest = md5::compute(format!("@{salt}${pwd}").as_bytes());
         format!("{:x}", digest)
+    }
+
+    pub async fn get_user_password_info_by_id(id: i32) -> Result<UserPasswordInfo> {
+        let user = sqlx::query_as::<_, UserPasswordInfo>(
+            "select (password, salt) from \"user\" where id = $1;",
+        )
+        .bind(id)
+        .fetch_one(get_db_pool())
+        .await?;
+        Ok(user)
+    }
+
+    pub async fn get_user_password_info_by_email(email: String) -> Result<UserPasswordInfo> {
+        let user = sqlx::query_as::<_, UserPasswordInfo>(
+            "select (password, salt) from \"user\" where email = $1;",
+        )
+        .bind(email)
+        .fetch_one(get_db_pool())
+        .await?;
+        Ok(user)
     }
 
     pub async fn create_user(info: UserCreator) -> Result<UserReader> {
@@ -58,7 +85,9 @@ impl User {
         .bind(info.email.clone())
         .bind(info.username)
         .bind(hashed_password)
-        .bind(salt).execute(get_db_pool()).await?;
+        .bind(salt)
+        .execute(get_db_pool())
+        .await?;
 
         Self::get_user_by_email(info.email).await
     }

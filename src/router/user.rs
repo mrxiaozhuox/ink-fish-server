@@ -35,9 +35,15 @@ pub async fn user_login(req: &mut Request) -> Result<Json<UserReader>> {
     let email = email.unwrap();
     let password = password.unwrap();
 
-    let user = User::get_user_by_email(email).await?;
+    let user = User::get_user_password_info_by_email(email).await?;
 
-    // User::gen_hashed_password(user.);
+    let hashed_password = User::gen_hashed_password(user.salt, password);
+    if hashed_password == user.password {
+        // password check passed
+        
+    } else {
+        // password check failed
+    }
 
     todo!()
 }
